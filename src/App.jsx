@@ -10,7 +10,13 @@ function App() {
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    try {
+      return localStorage.getItem("darkMode") === "true";
+    } catch {
+      return false;
+    }
+  });
   const [refreshCount, setRefreshCount] = useState(0);
   const [selectedDate, setSelectedDate] = useState(
     new Date().toLocaleDateString("en-CA")
@@ -35,6 +41,14 @@ function App() {
       // Keep favorites usable for this session if browser storage is unavailable.
     }
   }, [favoriteTeams]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("darkMode", String(darkMode));
+    } catch {
+      // Keep theme switching usable if browser storage is unavailable.
+    }
+  }, [darkMode]);
 
   function toggleFavorite(teamName) {
     setFavoriteTeams((current) =>
