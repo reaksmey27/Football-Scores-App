@@ -12,40 +12,56 @@ export const MAJOR_LEAGUES = [
   { id: 253, name: "MLS" },
 ];
 
-export async function getFixtures(date) {
+const leagueNames = new Map(MAJOR_LEAGUES.map(({ id, name }) => [id, name]));
+const pendingRequests = new Map();
+let retryAfter = 0;
+
+export function getFixtures(date) {
+  if (pendingRequests.has(date)) return pendingRequests.get(date);
+  if (Date.now() < retryAfter) {
+    return Promise.reject(new Error("Too many requests. Please wait one minute before trying again."));
+  }
+  const request = fetchFixtures(date).finally(() => pendingRequests.delete(date));
+  pendingRequests.set(date, request);
+  return request;
+}
+
+async function fetchFixtures(date) {
   const apiKey = import.meta.env.VITE_FOOTBALL_API_KEY;
 
   if (!apiKey) {
     throw new Error("API key is missing. Check your .env file.");
   }
 
-  const season = Number(date.slice(0, 4));
-
-  const results = await Promise.all(
-    MAJOR_LEAGUES.map(async (league) => {
       const url = new URL(`${API_URL}/fixtures`);
 
       url.searchParams.set("date", date);
-      url.searchParams.set("league", String(league.id));
-      url.searchParams.set("season", String(season));
 
       const response = await fetch(url, {
         headers: { "x-apisports-key": apiKey },
       });
 
+      if (response.status === 429) {
+        retryAfter = Date.now() + 60000;
+        throw new Error("Too many requests. Please wait one minute before trying again.");
+      }
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status}`);
       }
 
       const data = await response.json();
 
+      if (data.errors?.rateLimit) {
+        retryAfter = Date.now() + 60000;
+        throw new Error("Too many requests. Please wait one minute before trying again.");
+      }
       if (data.errors && Object.keys(data.errors).length > 0) {
         throw new Error(JSON.stringify(data.errors));
       }
 
-      return data.response.map((item) => ({
+      return data.response.filter((item) => leagueNames.has(item.league.id)).map((item) => ({
         id: item.fixture.id,
-        league: item.league.name,
+        league: leagueNames.get(item.league.id),
         homeTeam: item.teams.home.name,
         awayTeam: item.teams.away.name,
         homeLogo: item.teams.home.logo,
@@ -60,11 +76,7 @@ export async function getFixtures(date) {
               minute: "2-digit",
             }),
         status: getMatchStatus(item.fixture.status.short),
-      }));
-    })
-  );
-
-  return results.flat().sort(
+      })).sort(
     (a, b) => new Date(a.date) - new Date(b.date)
   );
 }

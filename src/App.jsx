@@ -4,7 +4,7 @@ import MatchCard from "./components/MatchCard";
 import MatchDetails from "./components/MatchDetails";
 import MatchSkeleton from "./components/MatchSkeleton";
 import FavoriteButton from "./components/FavoriteButton";
-import { getFixtures } from "./services/footballApi";
+import { getFixtures, MAJOR_LEAGUES } from "./services/footballApi";
 
 function App() {
   const [matches, setMatches] = useState([]);
@@ -272,11 +272,7 @@ function App() {
           <div className="mb-5 flex flex-wrap gap-2">
             {[
               "All Leagues",
-              "Premier League",
-              "La Liga",
-              "Serie A",
-              "Bundesliga",
-              "Ligue 1",
+              ...MAJOR_LEAGUES.map((league) => league.name),
             ].map((league) => {
               const available =
                 league === "All Leagues" ||
