@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
 import MatchCard from "./components/MatchCard";
+import MatchSkeleton from "./components/MatchSkeleton";
 import FavoriteButton from "./components/FavoriteButton";
 import { getFixtures } from "./services/footballApi";
 
@@ -267,9 +268,11 @@ function App() {
           </div>
 
           {loading && (
-            <p className="rounded-xl bg-white p-8 text-center text-slate-500">
-              Loading football matches...
-            </p>
+            <div className="grid gap-4" aria-label="Loading matches" role="status">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <MatchSkeleton key={index} />
+              ))}
+            </div>
           )}
 
           {!loading && error && (
