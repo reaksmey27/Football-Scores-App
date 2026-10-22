@@ -1,12 +1,14 @@
 
 import { useEffect, useState } from "react";
 import MatchCard from "./components/MatchCard";
+import MatchDetails from "./components/MatchDetails";
 import MatchSkeleton from "./components/MatchSkeleton";
 import FavoriteButton from "./components/FavoriteButton";
 import { getFixtures } from "./services/footballApi";
 
 function App() {
   const [matches, setMatches] = useState([]);
+  const [selectedMatch, setSelectedMatch] = useState(null);
   const [selectedLeague, setSelectedLeague] = useState("All Leagues");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
@@ -330,7 +332,14 @@ function App() {
             <div className="grid gap-4">
               {filteredMatches.map((match) => (
                 <div key={match.id} className="relative">
-                  <MatchCard match={match} darkMode={darkMode} />
+                  <button
+                    type="button"
+                    onClick={() => setSelectedMatch(match)}
+                    className="block w-full rounded-xl text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                    aria-label={`View ${match.homeTeam} versus ${match.awayTeam}`}
+                  >
+                    <MatchCard match={match} darkMode={darkMode} />
+                  </button>
                   <div className="absolute right-3 top-12 z-10 flex gap-1">
                     <FavoriteButton
                       teamName={match.homeTeam}
@@ -353,6 +362,13 @@ function App() {
           Football Scores · Powered by API-Football
         </footer>
       </div>
+      {selectedMatch && (
+        <MatchDetails
+          match={selectedMatch}
+          darkMode={darkMode}
+          onClose={() => setSelectedMatch(null)}
+        />
+      )}
     </main>
   );
 }
