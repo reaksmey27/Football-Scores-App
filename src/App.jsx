@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
 import MatchCard from "./components/MatchCard";
+import FavoriteButton from "./components/FavoriteButton";
 import { getFixtures } from "./services/footballApi";
 
 function App() {
@@ -14,6 +15,32 @@ function App() {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [favoriteTeams, setFavoriteTeams] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("favoriteTeams"));
+      return Array.isArray(stored)
+        ? stored.filter((team) => typeof team === "string")
+        : [];
+    } catch {
+      return [];
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("favoriteTeams", JSON.stringify(favoriteTeams));
+    } catch {
+      // Keep favorites usable for this session if browser storage is unavailable.
+    }
+  }, [favoriteTeams]);
+
+  function toggleFavorite(teamName) {
+    setFavoriteTeams((current) =>
+      current.includes(teamName)
+        ? current.filter((team) => team !== teamName)
+        : [...current, teamName]
+    );
+  }
 
   useEffect(() => {
     async function loadMatches() {
@@ -221,7 +248,21 @@ function App() {
           {!loading && !error && filteredMatches.length > 0 && (
             <div className="grid gap-4">
               {filteredMatches.map((match) => (
-                <MatchCard key={match.id} match={match} />
+                <div key={match.id} className="relative">
+                  <MatchCard match={match} />
+                  <div className="absolute right-3 top-12 z-10 flex gap-1">
+                    <FavoriteButton
+                      teamName={match.homeTeam}
+                      isFavorite={favoriteTeams.includes(match.homeTeam)}
+                      onToggle={() => toggleFavorite(match.homeTeam)}
+                    />
+                    <FavoriteButton
+                      teamName={match.awayTeam}
+                      isFavorite={favoriteTeams.includes(match.awayTeam)}
+                      onToggle={() => toggleFavorite(match.awayTeam)}
+                    />
+                  </div>
+                </div>
               ))}
             </div>
           )}
