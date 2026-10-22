@@ -8,6 +8,7 @@ function App() {
   const [selectedLeague, setSelectedLeague] = useState("All Leagues");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [refreshCount, setRefreshCount] = useState(0);
   const [selectedDate, setSelectedDate] = useState(
     new Date().toLocaleDateString("en-CA")
   );
@@ -30,7 +31,7 @@ function App() {
     }
 
     loadMatches();
-  }, [selectedDate]);
+  }, [selectedDate, refreshCount]);
 
   const leagues = [
     "All Leagues",
@@ -150,6 +151,13 @@ function App() {
                   </option>
                 ))}
               </select>
+              <button
+                onClick={() => setRefreshCount((count) => count + 1)}
+                disabled={loading}
+                className="rounded-lg bg-emerald-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-emerald-800 disabled:opacity-50"
+              >
+                {loading ? "Loading..." : "↻ Refresh"}
+              </button>
             </div>
           </div>
 
@@ -181,7 +189,7 @@ function App() {
               <p className="font-semibold">Unable to load matches</p>
               <p className="mt-2 break-words text-sm">{error}</p>
               <button
-                onClick={() => setSelectedDate(selectedDate)}
+                onClick={() => setRefreshCount((count) => count + 1)}
                 className="mt-4 rounded-lg bg-red-700 px-4 py-2 text-white"
               >
                 Try again
