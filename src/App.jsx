@@ -10,6 +10,7 @@ function App() {
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const [refreshCount, setRefreshCount] = useState(0);
   const [selectedDate, setSelectedDate] = useState(
     new Date().toLocaleDateString("en-CA")
@@ -90,7 +91,11 @@ function App() {
   });
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-8">
+    <main
+      className={`min-h-screen px-4 py-8 transition-colors sm:px-8 ${
+        darkMode ? "bg-slate-950 text-white" : "bg-slate-50 text-slate-900"
+      }`}
+    >
       <div className="mx-auto max-w-4xl">
         <header className="mb-8 overflow-hidden rounded-2xl bg-emerald-950 text-white">
           <nav className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 px-5 py-4 sm:px-8">
@@ -104,6 +109,15 @@ function App() {
             >
               View Matches
             </a>
+            <button
+              type="button"
+              onClick={() => setDarkMode((current) => !current)}
+              aria-pressed={darkMode}
+              aria-label="Dark mode"
+              className="rounded-lg bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
+            >
+              {darkMode ? "☀️ Light" : "🌙 Dark"}
+            </button>
           </nav>
 
           <div className="px-5 py-8 sm:px-8 sm:py-10">
@@ -267,7 +281,7 @@ function App() {
             <div className="grid gap-4">
               {filteredMatches.map((match) => (
                 <div key={match.id} className="relative">
-                  <MatchCard match={match} />
+                  <MatchCard match={match} darkMode={darkMode} />
                   <div className="absolute right-3 top-12 z-10 flex gap-1">
                     <FavoriteButton
                       teamName={match.homeTeam}

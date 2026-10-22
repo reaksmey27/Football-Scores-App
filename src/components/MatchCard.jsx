@@ -1,5 +1,5 @@
 
-function MatchCard({ match }) {
+function MatchCard({ match, darkMode = false }) {
   const statusStyle = {
     Live: "bg-red-100 text-red-700",
     Finished: "bg-slate-100 text-slate-600",
@@ -7,7 +7,13 @@ function MatchCard({ match }) {
   };
 
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:shadow-md sm:p-5">
+    <article
+      className={`rounded-xl border p-4 shadow-sm transition hover:shadow-md sm:p-5 ${
+        darkMode
+          ? "border-slate-700 bg-slate-900 text-white"
+          : "border-slate-200 bg-white text-slate-900"
+      }`}
+    >
       <div className="mb-5 flex items-center justify-between gap-3">
         <span className="text-sm text-slate-500">
           {match.league}
@@ -39,7 +45,9 @@ function MatchCard({ match }) {
 
         <div
           className={`min-w-16 text-center text-lg font-bold ${
-            match.status === "Live" ? "text-red-600" : "text-slate-900"
+            match.status === "Live"
+              ? darkMode ? "text-red-400" : "text-red-600"
+              : darkMode ? "text-white" : "text-slate-900"
           }`}
         >
           {match.status === "Upcoming"
