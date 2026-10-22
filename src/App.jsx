@@ -6,6 +6,7 @@ import { getFixtures } from "./services/footballApi";
 function App() {
   const [matches, setMatches] = useState([]);
   const [selectedLeague, setSelectedLeague] = useState("All Leagues");
+  const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedDate, setSelectedDate] = useState(
     new Date().toLocaleDateString("en-CA")
   );
@@ -35,10 +36,17 @@ function App() {
     ...new Set(matches.map((match) => match.league)),
   ];
 
-  const filteredMatches =
-    selectedLeague === "All Leagues"
-      ? matches
-      : matches.filter((match) => match.league === selectedLeague);
+  const filteredMatches = matches.filter((match) => {
+    const matchesLeague =
+      selectedLeague === "All Leagues" ||
+      match.league === selectedLeague;
+
+    const matchesStatus =
+      selectedStatus === "All" ||
+      match.status === selectedStatus;
+
+    return matchesLeague && matchesStatus;
+  });
 
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-8">
@@ -94,6 +102,23 @@ function App() {
             </div>
           </div>
 
+          <div className="mb-5 flex flex-wrap gap-2">
+            {["All", "Live", "Finished", "Upcoming"].map((status) => (
+              <button
+                key={status}
+                onClick={() => setSelectedStatus(status)}
+                aria-pressed={selectedStatus === status}
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  selectedStatus === status
+                    ? "bg-emerald-700 text-white"
+                    : "bg-white text-slate-600 hover:bg-emerald-50"
+                }`}
+              >
+                {status}
+              </button>
+            ))}
+          </div>
+
           {loading && (
             <p className="rounded-xl bg-white p-8 text-center text-slate-500">
               Loading football matches...
@@ -115,7 +140,7 @@ function App() {
 
           {!loading && !error && filteredMatches.length === 0 && (
             <p className="rounded-xl bg-white p-8 text-center text-slate-500">
-              No matches found for this date or league.
+              No matches found for this date, league, or status.
             </p>
           )}
 
