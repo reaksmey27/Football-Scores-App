@@ -7,6 +7,7 @@ function App() {
   const [matches, setMatches] = useState([]);
   const [selectedLeague, setSelectedLeague] = useState("All Leagues");
   const [selectedStatus, setSelectedStatus] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedDate, setSelectedDate] = useState(
     new Date().toLocaleDateString("en-CA")
   );
@@ -45,7 +46,13 @@ function App() {
       selectedStatus === "All" ||
       match.status === selectedStatus;
 
-    return matchesLeague && matchesStatus;
+    const search = searchTerm.toLowerCase();
+
+    const matchesSearch =
+      match.homeTeam.toLowerCase().includes(search) ||
+      match.awayTeam.toLowerCase().includes(search);
+
+    return matchesLeague && matchesStatus && matchesSearch;
   });
 
   return (
@@ -76,7 +83,16 @@ function App() {
               </p>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <input
+                type="text"
+                aria-label="Search teams"
+                placeholder="Search teams..."
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm outline-none focus:border-emerald-600 sm:w-56"
+              />
+
               <input
                 type="date"
                 value={selectedDate}
@@ -140,7 +156,7 @@ function App() {
 
           {!loading && !error && filteredMatches.length === 0 && (
             <p className="rounded-xl bg-white p-8 text-center text-slate-500">
-              No matches found for this date, league, or status.
+              No matches found for this date, league, status, or team search.
             </p>
           )}
 
