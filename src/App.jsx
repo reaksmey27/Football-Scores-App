@@ -281,9 +281,9 @@ function App() {
               <p className="mt-2 break-words text-sm">{error}</p>
               <button
                 onClick={() => setRefreshCount((count) => count + 1)}
-                className="mt-4 rounded-lg bg-red-700 px-4 py-2 text-white"
+                className="mt-4 rounded-lg bg-red-700 px-4 py-2 font-semibold text-white transition hover:bg-red-800"
               >
-                Try again
+                Try Again
               </button>
             </div>
           )}
