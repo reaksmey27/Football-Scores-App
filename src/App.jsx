@@ -71,6 +71,41 @@ function App() {
         </header>
 
         <section>
+          <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {[
+              {
+                label: "Total Matches",
+                value: matches.length,
+                color: "text-slate-900",
+              },
+              {
+                label: "Live Now",
+                value: matches.filter((match) => match.status === "Live").length,
+                color: "text-red-600",
+              },
+              {
+                label: "Finished",
+                value: matches.filter((match) => match.status === "Finished").length,
+                color: "text-emerald-700",
+              },
+              {
+                label: "Upcoming",
+                value: matches.filter((match) => match.status === "Upcoming").length,
+                color: "text-blue-600",
+              },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+              >
+                <p className="text-sm text-slate-500">{stat.label}</p>
+                <p className={`mt-2 text-2xl font-bold ${stat.color}`}>
+                  {stat.value}
+                </p>
+              </div>
+            ))}
+          </div>
+
           <div className="mb-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
               <h2 className="text-xl font-bold text-slate-900">
