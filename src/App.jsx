@@ -9,6 +9,7 @@ function App() {
   const [selectedLeague, setSelectedLeague] = useState("All Leagues");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [refreshCount, setRefreshCount] = useState(0);
   const [selectedDate, setSelectedDate] = useState(
     new Date().toLocaleDateString("en-CA")
@@ -80,7 +81,12 @@ function App() {
       match.homeTeam.toLowerCase().includes(search) ||
       match.awayTeam.toLowerCase().includes(search);
 
-    return matchesLeague && matchesStatus && matchesSearch;
+    const matchesFavorite =
+      !showFavoritesOnly ||
+      favoriteTeams.includes(match.homeTeam) ||
+      favoriteTeams.includes(match.awayTeam);
+
+    return matchesLeague && matchesStatus && matchesSearch && matchesFavorite;
   });
 
   return (
@@ -218,6 +224,18 @@ function App() {
                 {status}
               </button>
             ))}
+            <button
+              type="button"
+              onClick={() => setShowFavoritesOnly((current) => !current)}
+              aria-pressed={showFavoritesOnly}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                showFavoritesOnly
+                  ? "bg-amber-500 text-white"
+                  : "bg-white text-slate-600 hover:bg-amber-50"
+              }`}
+            >
+              {showFavoritesOnly ? "★ Favorites On" : "☆ Favorites"}
+            </button>
           </div>
 
           {loading && (
@@ -241,7 +259,7 @@ function App() {
 
           {!loading && !error && filteredMatches.length === 0 && (
             <p className="rounded-xl bg-white p-8 text-center text-slate-500">
-              No matches found for this date, league, status, or team search.
+              No matches found for the selected date and filters.
             </p>
           )}
 
