@@ -1,10 +1,6 @@
-
-function MatchCard({ match, darkMode = false }) {
-  const statusStyle = {
-    Live: "bg-red-100 text-red-700",
-    Finished: "bg-slate-100 text-slate-600",
-    Upcoming: "bg-emerald-100 text-emerald-700",
-  };
+﻿function MatchCard({ match, darkMode = false }) {
+  const isLive = match.status === "Live";
+  const isUpcoming = match.status === "Upcoming";
 
   return (
     <article
@@ -14,64 +10,76 @@ function MatchCard({ match, darkMode = false }) {
           : "border-slate-200 bg-white text-slate-900"
       }`}
     >
-      <div className="mb-5 flex items-center justify-between gap-3">
-        <span className="text-sm text-slate-500">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+        <span
+          className={`rounded-md px-3 py-1 text-xs font-semibold ${
+            darkMode
+              ? "bg-slate-800 text-slate-300"
+              : "bg-slate-100 text-slate-600"
+          }`}
+        >
           {match.league}
         </span>
 
         <span
-          className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
-            statusStyle[match.status] || statusStyle.Upcoming
+          className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold ${
+            isLive
+              ? "bg-red-100 text-red-700"
+              : match.status === "Finished"
+                ? "bg-slate-100 text-slate-600"
+                : "bg-emerald-100 text-emerald-700"
           }`}
         >
-          {match.status === "Live" && (
-            <span className="mr-1 inline-block h-2 w-2 animate-pulse rounded-full bg-red-600" />
+          {isLive && (
+            <span className="h-2 w-2 animate-pulse rounded-full bg-red-600" />
           )}
-          {match.status === "Live" ? "LIVE" : match.status}
+          {isLive ? "LIVE" : match.status}
         </span>
       </div>
 
-      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-        <div className="flex min-w-0 items-center gap-2 font-semibold">
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-4">
+        <div className="flex min-w-0 flex-col items-center gap-2 text-center">
           {match.homeLogo && (
             <img
               src={match.homeLogo}
               alt=""
-              className="h-7 w-7 shrink-0 object-contain"
+              className="h-10 w-10 object-contain"
             />
           )}
-          <span className="break-words">{match.homeTeam}</span>
+          <span className="break-words text-sm font-semibold sm:text-base">
+            {match.homeTeam}
+          </span>
         </div>
 
-        <div
-          className={`min-w-16 text-center text-lg font-bold ${
-            match.status === "Live"
-              ? darkMode ? "text-red-400" : "text-red-600"
-              : darkMode ? "text-white" : "text-slate-900"
-          }`}
-        >
-          {match.status === "Upcoming"
-            ? match.time
-            : `${match.homeScore ?? "-"} - ${match.awayScore ?? "-"}`}
+        <div className="min-w-20 text-center">
+          <p
+            className={`text-xl font-extrabold sm:text-2xl ${
+              isLive ? "text-red-600" : ""
+            }`}
+          >
+            {isUpcoming
+              ? match.time
+              : `${match.homeScore ?? "-"} - ${match.awayScore ?? "-"}`}
+          </p>
+
+          {!isUpcoming && (
+            <p className="mt-1 text-xs text-slate-400">{match.time}</p>
+          )}
         </div>
 
-        <div className="flex min-w-0 items-center justify-end gap-2 text-right font-semibold">
-          <span className="break-words">{match.awayTeam}</span>
+        <div className="flex min-w-0 flex-col items-center gap-2 text-center">
           {match.awayLogo && (
             <img
               src={match.awayLogo}
               alt=""
-              className="h-7 w-7 shrink-0 object-contain"
+              className="h-10 w-10 object-contain"
             />
           )}
+          <span className="break-words text-sm font-semibold sm:text-base">
+            {match.awayTeam}
+          </span>
         </div>
       </div>
-
-      {match.status !== "Upcoming" && (
-        <p className="mt-4 text-center text-xs text-slate-400">
-          {match.time}
-        </p>
-      )}
     </article>
   );
 }
