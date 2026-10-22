@@ -29,6 +29,7 @@ export async function getFixtures(date) {
 
   return data.response.map((item) => ({
     id: item.fixture.id,
+    date: item.fixture.date,
     league: item.league.name,
     homeTeam: item.teams.home.name,
     awayTeam: item.teams.away.name,

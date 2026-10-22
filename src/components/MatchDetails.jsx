@@ -1,7 +1,38 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 function MatchDetails({ match, onClose, darkMode = false }) {
+  const [countdown, setCountdown] = useState("");
   const closeButtonRef = useRef(null);
+
+  useEffect(() => {
+    if (match.status !== "Upcoming") return;
+
+    const updateCountdown = () => {
+      const now = Date.now();
+      const kickoff = new Date(match.date).getTime();
+      const difference = kickoff - now;
+
+      if (!match.date || Number.isNaN(kickoff)) {
+        setCountdown("Kickoff time unavailable");
+        return;
+      }
+
+      if (difference <= 0) {
+        setCountdown("Kickoff time reached");
+        return;
+      }
+
+      const hours = Math.floor(difference / (1000 * 60 * 60));
+      const minutes = Math.floor((difference / (1000 * 60)) % 60);
+
+      setCountdown(`${hours}h ${minutes}m until kickoff`);
+    };
+
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 60000);
+
+    return () => clearInterval(timer);
+  }, [match]);
 
   useEffect(() => {
     const previousFocus = document.activeElement;
@@ -95,6 +126,11 @@ function MatchDetails({ match, onClose, darkMode = false }) {
           <p className="text-sm text-slate-400">Status</p>
           <p className="mt-1 font-semibold">{match.status}</p>
           <p className="mt-1 text-sm text-slate-400">{match.time}</p>
+          {match.status === "Upcoming" && countdown && (
+            <p className="mt-2 font-semibold text-emerald-600">
+              {countdown}
+            </p>
+          )}
         </div>
       </div>
     </div>
