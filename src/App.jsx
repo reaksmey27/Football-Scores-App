@@ -267,6 +267,38 @@ function App() {
             </button>
           </div>
 
+          <div className="mb-5 flex flex-wrap gap-2">
+            {[
+              "All Leagues",
+              "Premier League",
+              "La Liga",
+              "Serie A",
+              "Bundesliga",
+              "Ligue 1",
+            ].map((league) => {
+              const available =
+                league === "All Leagues" ||
+                matches.some((match) => match.league === league);
+
+              return (
+                <button
+                  key={league}
+                  type="button"
+                  disabled={!available}
+                  onClick={() => setSelectedLeague(league)}
+                  aria-pressed={selectedLeague === league}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    selectedLeague === league
+                      ? "bg-emerald-700 text-white"
+                      : "bg-white text-slate-600 hover:bg-emerald-50"
+                  } disabled:cursor-not-allowed disabled:opacity-40`}
+                >
+                  {league}
+                </button>
+              );
+            })}
+          </div>
+
           {loading && (
             <div className="grid gap-4" aria-label="Loading matches" role="status">
               {Array.from({ length: 4 }).map((_, index) => (
