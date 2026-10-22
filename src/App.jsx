@@ -59,19 +59,34 @@ function App() {
   return (
     <main className="min-h-screen bg-slate-50 px-4 py-8 sm:px-8">
       <div className="mx-auto max-w-4xl">
-        <header className="mb-8 rounded-2xl bg-emerald-950 p-6 text-white sm:p-8">
-          <p className="mb-3 text-xs font-bold tracking-[0.25em] text-emerald-300">
-            YOUR FOOTBALL HUB
-          </p>
-          <h1 className="text-3xl font-bold sm:text-4xl">
-            Football Scores
-          </h1>
-          <p className="mt-3 text-emerald-100">
-            Real fixtures from football leagues around the world.
-          </p>
+        <header className="mb-8 overflow-hidden rounded-2xl bg-emerald-950 text-white">
+          <nav className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 px-5 py-4 sm:px-8">
+            <a href="#" className="text-xl font-extrabold tracking-tight">
+              <span className="text-emerald-400">⚽</span> FootyScore
+            </a>
+
+            <a
+              href="#matches"
+              className="rounded-lg bg-white/10 px-4 py-2 text-sm font-semibold transition hover:bg-white/20"
+            >
+              View Matches
+            </a>
+          </nav>
+
+          <div className="px-5 py-8 sm:px-8 sm:py-10">
+            <p className="mb-3 text-xs font-bold tracking-[0.25em] text-emerald-300">
+              YOUR FOOTBALL HUB
+            </p>
+            <h1 className="text-3xl font-bold sm:text-4xl">
+              Football Scores
+            </h1>
+            <p className="mt-3 max-w-lg text-emerald-100">
+              Follow live scores, match results, and upcoming fixtures from leagues around the world.
+            </p>
+          </div>
         </header>
 
-        <section>
+        <section id="matches">
           <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[
               {
