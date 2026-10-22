@@ -18,7 +18,10 @@ function MatchCard({ match }) {
             statusStyle[match.status] || statusStyle.Upcoming
           }`}
         >
-          {match.status}
+          {match.status === "Live" && (
+            <span className="mr-1 inline-block h-2 w-2 animate-pulse rounded-full bg-red-600" />
+          )}
+          {match.status === "Live" ? "LIVE" : match.status}
         </span>
       </div>
 
@@ -34,7 +37,11 @@ function MatchCard({ match }) {
           <span className="break-words">{match.homeTeam}</span>
         </div>
 
-        <div className="min-w-16 text-center text-lg font-bold">
+        <div
+          className={`min-w-16 text-center text-lg font-bold ${
+            match.status === "Live" ? "text-red-600" : "text-slate-900"
+          }`}
+        >
           {match.status === "Upcoming"
             ? match.time
             : `${match.homeScore ?? "-"} - ${match.awayScore ?? "-"}`}
